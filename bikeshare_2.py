@@ -245,7 +245,7 @@ def display_data(df):
             is_row = get_input_with_validation("Do you wish to continue viewing the data? Select Yes or No\n",is_yes_no_dict)
             if is_row == '2':
                 break
-            index = index + increment
+            index += increment
     else:
         print("You have chosen not to view individual trip data 5 rows at a time")
 
