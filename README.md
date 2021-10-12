@@ -1,8 +1,8 @@
 ###Date created
-#####**10-October-2021**
+**10-October-2021**
 
 ### Project Title
-#####**udacity_bikeshare_project**
+**udacity_bikeshare_project**
 
 ### Description
 Project is about using **Python** to compute usage patterns by exploring **United States bike share data** provided by Motivate. Program uses randomly selected data of three major cities, that is **Chicago, New York City**, and **Washington**.
