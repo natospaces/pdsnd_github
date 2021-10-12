@@ -1,1 +1,5 @@
 .github/**
+
+
+#data file which is sqlite database instead of csv
+udabikeshare.db
