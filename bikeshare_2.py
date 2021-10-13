@@ -20,7 +20,7 @@ def get_input_with_validation(input_prompt_message,options):
     """
     Takes a message to be used as in input prompt in the command line
     and dictionary which will be used to validate the user input
-    
+
     if user enters an incorrect option it loops till they enter a correct one
 
     Returns:
@@ -34,7 +34,7 @@ def get_input_with_validation(input_prompt_message,options):
     if correct_response.lower() in CITY_DATA.keys():
         selected_city.append(correct_response.lower())
     return options.get(correct_response.lower())
-    
+
 
 def get_filters():
     """
@@ -54,7 +54,7 @@ def get_filters():
 
     input_month_message = "To select month filter from (All,January,February,March,April,May,June)\n"
     month = get_input_with_validation(input_month_message, month_filter)
-    
+
     input_day_message = "To select day of the week filter from (All,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday)\n"
     day = get_input_with_validation(input_day_message, day_filter)
 
@@ -74,7 +74,7 @@ def load_data(city, month, day):
         df - Pandas DataFrame containing city data filtered by month and day
     """
     sqlcon = sqlite3.connect("udabikeshare.db")
-    
+
     main_select = """ SELECT   c.[Start Time]
                               ,c.[End Time]
                               ,c.[Duration]
@@ -85,14 +85,14 @@ def load_data(city, month, day):
                               ,c.[Birth Year]
                       FROM    t_trip_cities c
                 """
-    
+
     city_filter = " where city_id = " + str(city)
-        
+
     if month == '0' or month == '-1':
         month_filter = ""
     else:
         month_filter = " and substr([Start Time],4,2) = '0" + month + "'"
-        
+
     if day == '0' or day == '-1':
         day_filter = ""
     else:
@@ -100,10 +100,10 @@ def load_data(city, month, day):
 || substr([Start Time],4,2) || '-' || substr([Start Time],1,2)\
 || case when substr([Start Time],12,1) in ('1','2') then substr([Start Time],11) else ' 0'\
 || substr([Start Time],12)  end)) = '" + str((int(day)) - 1) + "' ;"
-    
+
     #print statement below shows the generated sql query
     #print(main_select + city_filter + month_filter + day_filter)
-        
+
     df = pd.read_sql_query(main_select + city_filter + month_filter + day_filter, sqlcon)
     df['Start Time'] = pd.to_datetime(df['Start Time']).dt.strftime("%m/%d/%Y %H:%M")
     df['Start Time'] = pd.to_datetime(df['Start Time'])
@@ -111,10 +111,10 @@ def load_data(city, month, day):
     df['Start Year Month Name'] = df['Start Time'].dt.month_name()
     df['Start Year Week Day Name'] = df['Start Time'].dt.day_name()
     df['Start Year Hour'] = df['Start Time'].dt.hour
-    
+
     df['Start Time'] = pd.to_datetime(df['Start Time']).dt.strftime("%m/%d/%Y %H:%M")
     df['Start Time'] = pd.to_datetime(df['Start Time'])
-    
+
     df['Birth Year'] = pd.to_numeric(df['Birth Year'], downcast ='integer',errors='coerce')
     if df['Birth Year'].isnull().values.all(axis=0):
         df = df.drop('Birth Year', 1)
@@ -138,11 +138,11 @@ def time_stats(df):
 
     # display the most common start hour
     print("\n Most Frequent Hour  : {hour}".format(hour=df['Start Year Hour'].mode()[0]))
- 
+
     print("\n"+("-"*40)+("*"*20))
     print("\nFrequency Stats Operations took %s seconds to execute." % (time.time() - start_time))
     print("-"*85)
-    
+
 def station_stats(df):
     """Displays statistics on the most popular stations and trip."""
 
@@ -161,12 +161,12 @@ def station_stats(df):
     # display most frequent combination of start station and end station trip
     print("\n Top Trip Combination Stations  : {top_combination}\
 ".format(top_combination=df['Start Station'].str.cat(df['End Station'], sep=' to ').mode()[0]))
-    
+
 
     print("\n"+("-"*40)+("*"*20))
     print("\nThe Top Stations and Trips Operations took %s seconds to execute." % (time.time() - start_time))
     print("-"*85)
-    
+
 def trip_duration_stats(df):
     """Displays statistics on the total and average trip duration."""
 
@@ -189,8 +189,8 @@ minutes and {secs} seconds. ".format(hours=divmod(divmod(df['Duration'].mean(), 
     print("\n"+("-"*40)+("*"*20))
     print("\nTrip Duration Operations took %s seconds to execute." % (time.time() - start_time))
     print("-"*85)
-    
-    
+
+
 def user_stats(df):
     """Displays statistics on bikeshare users."""
 
@@ -203,7 +203,7 @@ def user_stats(df):
 or empty values\n\n{user_type}\
 ".format(user_type=df['User Type'].value_counts().rename_axis('User Type').to_frame('Total')))
 
- 
+
     # Display earliest, most recent, and most common year of birth
     if 'Gender' in df.columns:
         # Display counts of gender
@@ -214,14 +214,14 @@ or empty values\n\n{user_type}\
     else:
         print("\nUnfortunately {selected_city} has no Gender Stats".format(selected_city=selected_city[0].capitalize()))
 
-        
+
     if 'Birth Year' in df.columns:
         print("\nCALCULATING :: Birth Year Stats: Earliest Year -> " + str(int(df['Birth Year'].min())) + \
           " , Most Recent Year -> " + str(int(df['Birth Year'].max())) + " , \
 Most Common Year -> " + str(int(df['Birth Year'].mode()[0])))
-    else:    
+    else:
         print("\nUnfortunately {selected_city} has no Birth Year Stats".format(selected_city=selected_city[0].capitalize()))
-        
+
     print("\n"+("-"*40)+("*"*20))
     print("\nUser and Birth Year Stats Operations took %s seconds to execute." % (time.time() - start_time))
     print("-"*85)
@@ -245,9 +245,9 @@ def display_data(df):
             is_row = get_input_with_validation("Do you wish to continue viewing the data? Select Yes or No\n",is_yes_no_dict)
             if is_row == '2':
                 break
-            index = index + increment
+            index += increment
     else:
-        print("You have chosen not to print rows")
+        print("You have chosen not to view individual trip data 5 rows at a time")
 
     print('-'*80)
 
@@ -264,7 +264,7 @@ def main():
         selected_city.clear()
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
-        if restart.lower() != 'yes':       
+        if restart.lower() != 'yes':
             break
 
 if __name__ == "__main__":
