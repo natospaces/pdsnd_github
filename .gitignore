@@ -1,5 +1,5 @@
-.github/**
+#ignore all csv data files
+*.csv
 
-
-#data file which is sqlite database instead of csv
+#ignore .db file since it is used as the data file in my project
 udabikeshare.db
